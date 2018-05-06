@@ -19,6 +19,7 @@ variableDeclaration:
 
 types:
         BOOLEAN_SYM
+      | BYTE_SYM
       | CHAR_SYM
       | INTEGER_SYM
       | SHORT_SYM
