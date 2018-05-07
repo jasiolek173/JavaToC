@@ -118,7 +118,6 @@ assignmentOperator:
 
 expression:
         arithmeticExpression
-      | comparisonExpression
       | logicalExpression
       | assignmentExpression
       ;
@@ -132,3 +131,23 @@ assignment:
 assignmentExpression:
         ID assignmentOperator (ID | expression)
         ;
+
+forStatement:
+        enhancedForStatement
+      | FOR_SYM LEFT_PARENTHESE_SYM forInit? SEMICOLON_SYM logicalExpression? SEMICOLON_SYM forUpdate? RIGHT_PARENTHESE_SYM
+        block
+      ;
+
+forInit:
+        variableDeclaration (ASSIGNMENT_SYM ID)+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING))?
+      | ID (ASSIGNMENT_SYM ID)+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID))?
+      | variableDeclaration ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID)
+      ;
+
+forUpdate:
+        assignmentExpression+ (COMMA_SYM assignmentExpression)*
+      ;
+
+enhancedForStatement:
+        FOR_SYM LEFT_PARENTHESE_SYM type ID COLON_SYM ID RIGHT_PARENTHESE_SYM block
+      ;
