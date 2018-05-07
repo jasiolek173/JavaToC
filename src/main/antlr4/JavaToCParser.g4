@@ -40,8 +40,8 @@ numberEquivalent:
     ;
 
 logicalConst:
-      TRUE
-    | FALSE
+      TRUE_SYM
+    | FALSE_SYM
     ;
 
 logicalEquivalent:
@@ -84,18 +84,51 @@ type:
       ;
 
 block:
-      '{' statement* '}'
+      LEFT_BRACE_SYM statement* RIGHT_BRACE_SYM
       ;
 
 ifStatement:
-    IF_SYM '(' logicalExpression ')' statement ( ELSE_SYM IF_SYM '(' logicalExpression ')' statement)* (ELSE_SYM statement)?
+    IF_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM (block | statement)
+    ( ELSE_SYM IF_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM (block | statement))*
+    (ELSE_SYM (block | statement))?
     ;
 
 doWhileStatement:
-    'do' block 'while' '(' logicalExpression ')'
+    DO_SYM (block | statement) WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM
     ;
 
 whileDoStatement:
-    'while' '(' logicalExpression ')' block
+    WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM (block | statement)
     ;
 
+assignmentOperator:
+        ASSIGNMENT_SYM
+	  | ASSIGN_MULTIPLICATION_SYM
+	  | ASSIGN_DIVISION_SYM
+	  | ASSIGN_MODULO_SYM
+	  | ASSIGN_PLUS_SYM
+	  | ASSIGN_MINUS_SYM
+	  | ASSIGN_LEFT_BIT_SHIFT_SYM
+	  | ASSIGN_RIGHT_BIT_SHIFT_SYM
+	  | ASSIGN_UN_RIGHT_BIT_SHIFT_SYM
+	  | ASSIGN_BITWISE_AND_SYM
+	  | ASSIGN_BITWISE_EX_OR_SYM
+	  | ASSIGN_BITWISE_IN_OR_SYM
+	  ;
+
+expression:
+        arithmeticExpression
+      | comparisonExpression
+      | logicalExpression
+      | assignmentExpression
+      ;
+
+assignment:
+        assignmentExpression
+        SEMICOLON_SYM
+        ;
+
+
+assignmentExpression:
+        ID assignmentOperator (ID | expression)
+        ;
