@@ -13,11 +13,11 @@ variableDeclaration:
                      type ID
                      ;
 
-statment:
+statement:
           variableDeclaration SEMICOLON_SYM
         | ifStatement
-        | whileDoStatment
-        | doWhileStatment
+        | whileDoStatement
+        | doWhileStatement
         ;
 
 
@@ -84,18 +84,18 @@ type:
       ;
 
 block:
-      '{' statment* '}'
+      '{' statement* '}'
       ;
 
 ifStatement:
-    IF_SYM '(' logicalExpression ')' statment ( ELSE_SYM IF_SYM '(' logicalExpression ')' statment)* (ELSE_SYM statment)?
+    IF_SYM '(' logicalExpression ')' statement ( ELSE_SYM IF_SYM '(' logicalExpression ')' statement)* (ELSE_SYM statement)?
     ;
 
-doWhileStatment:
+doWhileStatement:
     'do' block 'while' '(' logicalExpression ')'
     ;
 
-whileDoStatment:
+whileDoStatement:
     'while' '(' logicalExpression ')' block
     ;
 
