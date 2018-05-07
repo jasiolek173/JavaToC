@@ -79,7 +79,7 @@ BITWISE_EX_OR_SYM:					'^';
 
 
 ID:
-    ( LETTER | '$' | '_' ) ( LETTER | '$' | '_' | DIGIT+ )*
+    ( LETTER | '$' | '_' ) ( LETTER | '$' | '_' | DIGIT )*
     ;
 
 
