@@ -10,7 +10,16 @@ compilationUnit:
 
 
 variableDeclaration:
-                     type ID;
+                     type ID
+                     ;
+
+statment:
+          variableDeclaration SEMICOLON_SYM
+        | ifStatement
+        | whileDoStatment
+        | doWhileStatment
+        ;
+
 
 comparisonOperator:
       GREATER_SYM
@@ -73,3 +82,20 @@ type:
       | FLOAT_SYM
       | DOUBLE_SYM
       ;
+
+block:
+      '{' statment* '}'
+      ;
+
+ifStatement:
+    IF_SYM '(' logicalExpression ')' statment ( ELSE_SYM IF_SYM '(' logicalExpression ')' statment)* (ELSE_SYM statment)?
+    ;
+
+doWhileStatment:
+    'do' block 'while' '(' logicalExpression ')'
+    ;
+
+whileDoStatment:
+    'while' '(' logicalExpression ')' block
+    ;
+
