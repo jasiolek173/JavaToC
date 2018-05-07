@@ -20,6 +20,7 @@ statement:
         | doWhileStatement
         | forStatement
         | enhancedForStatement
+        | returnStatement
         ;
 
 
@@ -137,7 +138,7 @@ assignmentExpression:
 forStatement:
         enhancedForStatement
       | FOR_SYM LEFT_PARENTHESE_SYM forInit? SEMICOLON_SYM logicalExpression? SEMICOLON_SYM forUpdate? RIGHT_PARENTHESE_SYM
-        block
+        (block | continueStatement | breakStatement)
       ;
 
 forInit:
@@ -155,7 +156,7 @@ enhancedForStatement:
       ;
 
 returnStatement:
-        RETURN_SYM expression SEMICOLON_SYM
+        RETURN_SYM expression? SEMICOLON_SYM
       ;
 
 breakStatement:
