@@ -50,11 +50,11 @@ logicalEquivalent:
     ;
 
 arithmeticExpression:
-       arithmeticExpression MULTIPLICATION_SYM arithmeticExpression
+       MINUS_SYM arithmeticExpression
+     | arithmeticExpression MULTIPLICATION_SYM arithmeticExpression
      | arithmeticExpression DIVISION_SYM arithmeticExpression
      | arithmeticExpression PLUS_SYM arithmeticExpression
      | arithmeticExpression MINUS_SYM arithmeticExpression
-     | MINUS_SYM arithmeticExpression
      | LEFT_PARENTHESE_SYM arithmeticExpression RIGHT_PARENTHESE_SYM
      | numberEquivalent
      ;
