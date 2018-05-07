@@ -18,6 +18,8 @@ statement:
         | ifStatement
         | whileDoStatement
         | doWhileStatement
+        | forStatement
+        | enhancedForStatement
         ;
 
 
@@ -151,3 +153,15 @@ forUpdate:
 enhancedForStatement:
         FOR_SYM LEFT_PARENTHESE_SYM type ID COLON_SYM ID RIGHT_PARENTHESE_SYM block
       ;
+
+returnStatement:
+        RETURN_SYM expression SEMICOLON_SYM
+      ;
+
+breakStatement:
+        BREAK_SYM ID? SEMICOLON_SYM
+      ;
+
+continueStatement:
+      CONTINUE_SYM ID? SEMICOLON_SYM
+    ;
