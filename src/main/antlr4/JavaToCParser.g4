@@ -20,6 +20,7 @@ statement:
         | doWhileStatement
         | forStatement
         | enhancedForStatement
+        | returnStatement
         ;
 
 
@@ -96,11 +97,11 @@ ifStatement:
     ;
 
 doWhileStatement:
-    DO_SYM (block | statement) WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM
+    DO_SYM (block | statement | continueStatement | breakStatement) WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM
     ;
 
 whileDoStatement:
-    WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM (block | statement)
+    WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM (block | statement | continueStatement | breakStatement)
     ;
 
 assignmentOperator:
@@ -137,7 +138,7 @@ assignmentExpression:
 forStatement:
         enhancedForStatement
       | FOR_SYM LEFT_PARENTHESE_SYM forInit? SEMICOLON_SYM logicalExpression? SEMICOLON_SYM forUpdate? RIGHT_PARENTHESE_SYM
-        block
+        (block | continueStatement | breakStatement | statement)
       ;
 
 forInit:
@@ -151,11 +152,11 @@ forUpdate:
       ;
 
 enhancedForStatement:
-        FOR_SYM LEFT_PARENTHESE_SYM type ID COLON_SYM ID RIGHT_PARENTHESE_SYM block
+        FOR_SYM LEFT_PARENTHESE_SYM type ID COLON_SYM ID RIGHT_PARENTHESE_SYM (block | statement)
       ;
 
 returnStatement:
-        RETURN_SYM expression SEMICOLON_SYM
+        RETURN_SYM expression? SEMICOLON_SYM
       ;
 
 breakStatement:
