@@ -6,7 +6,7 @@ package com.compailer.javatoc.parser;
 options { tokenVocab=JavaToCLexer; }
 
 compilationUnit:
-                    INTEGER_NUMBER;
+                function*;
 
 
 variableDeclaration:
@@ -23,6 +23,11 @@ statement:
         | returnStatement
         ;
 
+loopStatment:
+                statement
+             |  breakStatement
+             |  continueStatement
+             ;
 
 comparisonOperator:
       GREATER_SYM
@@ -89,6 +94,10 @@ type:
 block:
       LEFT_BRACE_SYM statement* RIGHT_BRACE_SYM
       ;
+loopBlock:
+      LEFT_BRACE_SYM loopStatment* RIGHT_BRACE_SYM
+      ;
+
 
 ifStatement:
     IF_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM (block | statement)
@@ -97,11 +106,11 @@ ifStatement:
     ;
 
 doWhileStatement:
-    DO_SYM (block | statement | continueStatement | breakStatement) WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM
+    DO_SYM (loopBlock | loopStatment) WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM
     ;
 
 whileDoStatement:
-    WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM (block | statement | continueStatement | breakStatement)
+    WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM (loopBlock | loopStatment)
     ;
 
 assignmentOperator:
@@ -138,7 +147,7 @@ assignmentExpression:
 forStatement:
         enhancedForStatement
       | FOR_SYM LEFT_PARENTHESE_SYM forInit? SEMICOLON_SYM logicalExpression? SEMICOLON_SYM forUpdate? RIGHT_PARENTHESE_SYM
-        (block | continueStatement | breakStatement | statement)
+        (loopBlock | loopStatment)
       ;
 
 forInit:
@@ -166,3 +175,11 @@ breakStatement:
 continueStatement:
       CONTINUE_SYM ID? SEMICOLON_SYM
     ;
+
+function:
+        (type|VOID_SYM) ID LEFT_PARENTHESE_SYM parameterList RIGHT_PARENTHESE_SYM block
+        ;
+
+parameterList:
+        (type ID (COMMA_SYM type ID)*)?
+        ;
