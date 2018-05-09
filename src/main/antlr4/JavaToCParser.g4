@@ -134,6 +134,10 @@ expression:
         arithmeticExpression
       | logicalExpression
       | assignmentExpression
+      | preIncrementationExpression
+      | postIncrementationExpression
+      | preDecrementationExpression
+      | postDecrementationExpression
       ;
 
 assignment:
@@ -198,4 +202,23 @@ bitOperator:
 
 bitExpression:
         (ID | INTEGER_NUMBER) (bitOperator (ID | INTEGER_NUMBER))+
+      ;
+
+stringNullAssignment:
+        STRING_SYM ID ASSIGNMENT_SYM NULL_SYM;
+
+preIncrementationExpression:
+        INCREMENT_SYM ID
+      ;
+
+postIncrementationExpression:
+        ID INCREMENT_SYM
+      ;
+
+preDecrementationExpression:
+        DECREMENT_SYM ID
+      ;
+
+postDecrementationExpression:
+        ID DECREMENT_SYM
       ;
