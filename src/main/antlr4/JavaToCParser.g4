@@ -75,6 +75,8 @@ comparisonExpression:
 logicalExpression:
        logicalExpression LOGICAL_AND_SYM logicalExpression
      | logicalExpression LOGICAL_OR_SYM logicalExpression
+     | logicalExpression BITWISE_AND_SYM logicalExpression
+     | logicalExpression BITWISE_IN_OR_SYM logicalExpression
      | comparisonExpression
      | LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM
      | logicalEquivalent
@@ -137,12 +139,13 @@ expression:
 assignment:
         assignmentExpression
         SEMICOLON_SYM
-        ;
+      ;
 
 
 assignmentExpression:
         ID assignmentOperator (ID | expression)
-        ;
+      | ID (ASSIGNMENT_SYM ID)+ expression?
+      ;
 
 forStatement:
         enhancedForStatement
@@ -183,3 +186,16 @@ function:
 parameterList:
         (type ID (COMMA_SYM type ID)*)?
         ;
+
+bitOperator:
+        UN_RIGHT_BIT_SHIFT_SYM
+      | LEFT_BIT_SHIFT_SYM
+      | RIGHT_BIT_SHIFT_SYM
+      | BITWISE_AND_SYM
+      | BITWISE_IN_OR_SYM
+      | BITWISE_EX_OR_SYM
+      ;
+
+bitExpression:
+        (ID | INTEGER_NUMBER) (bitOperator (ID | INTEGER_NUMBER))+
+      ;
