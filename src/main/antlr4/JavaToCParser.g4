@@ -63,6 +63,7 @@ arithmeticExpression:
      | arithmeticExpression DIVISION_SYM arithmeticExpression
      | arithmeticExpression PLUS_SYM arithmeticExpression
      | arithmeticExpression MINUS_SYM arithmeticExpression
+     | arithmeticExpression MODULO_SYM arithmeticExpression
      | LEFT_PARENTHESE_SYM arithmeticExpression RIGHT_PARENTHESE_SYM
      | numberEquivalent
      ;
