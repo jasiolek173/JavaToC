@@ -83,7 +83,6 @@ ID:
     ( LETTER | '$' | '_' ) ( LETTER | '$' | '_' | DIGIT )*
     ;
 
-
 INTEGER_NUMBER:
                 DIGIT+
                 ;

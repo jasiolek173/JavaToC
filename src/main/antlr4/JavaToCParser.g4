@@ -14,6 +14,8 @@ variableDeclaration:
 
 statement:
           variableDeclaration
+        | arrayVariableDeclaration
+        | arrayVariableDeclarationWithInitialization
         | ifStatement
         | whileDoStatement
         | doWhileStatement
@@ -45,6 +47,7 @@ number:
 numberEquivalent:
       number
     | ID
+    | arrayElement
     ;
 
 logicalConst:
@@ -55,6 +58,7 @@ logicalConst:
 logicalEquivalent:
       logicalConst
     | ID
+    | arrayElement
     ;
 
 arithmeticExpression:
@@ -152,10 +156,15 @@ assignment:
 
 
 assignmentExpression:
-        (ID assignmentOperator (ID | expression)
-      | ID (ASSIGNMENT_SYM ID)+ expression?)
-      { if(!$block::symbols.contains($ID.text)) {
-        System.err.println("undefined variable: " + $ID.text);
+        ((ID | arrayElement) assignmentOperator (ID | arrayElement | expression)
+      | (ID | arrayElement) (ASSIGNMENT_SYM (ID | arrayElement))+ expression?)
+      { if(!$block::symbols.contains($ID.text) && !$block::symbols.contains($arrayElement.text.split("\\[")[0])) {
+        if($ID.text != null) {
+            System.err.println("undefined variable: " + $ID.text.split("\\[")[0]);
+        }
+        else {
+            System.err.println("undefined variable: " + $arrayElement.text.split("\\[")[0]);
+        }
       }
       }
       ;
@@ -167,9 +176,9 @@ forStatement:
       ;
 
 forInit:
-        variableDeclaration (ASSIGNMENT_SYM ID)+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING))?
-      | ID (ASSIGNMENT_SYM ID)+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID))?
-      | variableDeclaration ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID)
+        variableDeclaration (ASSIGNMENT_SYM (ID | arrayElement))+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING))?
+      | (ID | arrayElement) (ASSIGNMENT_SYM (ID | arrayElement))+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID | arrayElement))?
+      | variableDeclaration ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID | arrayElement)
       ;
 
 forUpdate:
@@ -193,11 +202,11 @@ continueStatement:
     ;
 
 function:
-        (type|VOID_SYM) ID LEFT_PARENTHESE_SYM parameterList RIGHT_PARENTHESE_SYM block
+        (type (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)? | VOID_SYM) ID LEFT_PARENTHESE_SYM parameterList RIGHT_PARENTHESE_SYM block
         ;
 
 parameterList:
-        (type ID (COMMA_SYM type ID)*)?
+        (type ID (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)? (COMMA_SYM type ID (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)?)*)?
         ;
 
 bitOperator:
@@ -210,24 +219,53 @@ bitOperator:
       ;
 
 bitExpression:
-        (ID | INTEGER_NUMBER) (bitOperator (ID | INTEGER_NUMBER))+
+        (ID | arrayElement | INTEGER_NUMBER) (bitOperator (ID | arrayElement | INTEGER_NUMBER))+
       ;
 
 stringNullAssignment:
         STRING_SYM ID ASSIGNMENT_SYM NULL_SYM;
 
 preIncrementationExpression:
-        INCREMENT_SYM ID
+        INCREMENT_SYM (ID | arrayElement)
       ;
 
 postIncrementationExpression:
-        ID INCREMENT_SYM
+        (ID | arrayElement) INCREMENT_SYM
       ;
 
 preDecrementationExpression:
-        DECREMENT_SYM ID
+        DECREMENT_SYM (ID | arrayElement)
       ;
 
 postDecrementationExpression:
-        ID DECREMENT_SYM
+        (ID | arrayElement) DECREMENT_SYM
       ;
+
+arrayVariableDeclaration:
+        type ID LEFT_BRACKET_SYM
+        (
+        INTEGER_NUMBER
+      | ID
+      | arithmeticExpression
+      | assignmentExpression
+      | preDecrementationExpression
+      | preIncrementationExpression
+      | postDecrementationExpression
+      | postIncrementationExpression
+        )
+        RIGHT_BRACKET_SYM
+        {$block::symbols.add($ID.text);}
+        SEMICOLON_SYM
+        ;
+
+arrayVariableDeclarationWithInitialization:
+        type ID LEFT_BRACKET_SYM RIGHT_BRACKET_SYM ASSIGNMENT_SYM LEFT_BRACE_SYM
+        ((expression COMMA_SYM)*expression? | COMMA_SYM? | expression)
+        RIGHT_BRACE_SYM
+        {$block::symbols.add($ID.text);}
+        SEMICOLON_SYM
+        ;
+
+arrayElement:
+        ID LEFT_BRACKET_SYM expression RIGHT_BRACKET_SYM
+        ;
