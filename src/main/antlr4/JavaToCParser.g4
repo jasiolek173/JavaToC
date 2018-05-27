@@ -8,19 +8,19 @@ options { tokenVocab=JavaToCLexer; }
 compilationUnit:
                 function*;
 
-
 variableDeclaration:
-                     type ID
+                     type ID {$block::symbols.add($ID.text);} SEMICOLON_SYM
                      ;
 
 statement:
-          variableDeclaration SEMICOLON_SYM
+          variableDeclaration
         | ifStatement
         | whileDoStatement
         | doWhileStatement
         | forStatement
         | enhancedForStatement
         | returnStatement
+        | assignment
         ;
 
 loopStatment:
@@ -93,7 +93,11 @@ type:
       | DOUBLE_SYM
       ;
 
-block:
+block
+      locals [
+      List<String> symbols = new ArrayList<String>();
+      ]
+      :
       LEFT_BRACE_SYM statement* RIGHT_BRACE_SYM
       ;
 loopBlock:
@@ -147,8 +151,12 @@ assignment:
 
 
 assignmentExpression:
-        ID assignmentOperator (ID | expression)
-      | ID (ASSIGNMENT_SYM ID)+ expression?
+        (ID assignmentOperator (ID | expression)
+      | ID (ASSIGNMENT_SYM ID)+ expression?)
+      { if(!$block::symbols.contains($ID.text)) {
+        System.err.println("undefined variable: " + $ID.text);
+      }
+      }
       ;
 
 forStatement:
