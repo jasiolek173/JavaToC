@@ -160,10 +160,10 @@ assignmentExpression:
       | (ID | arrayElement) (ASSIGNMENT_SYM (ID | arrayElement))+ expression?)
       { if(!$block::symbols.contains($ID.text) && !$block::symbols.contains($arrayElement.text.split("\\[")[0])) {
         if($ID.text != null) {
-            System.err.println("undefined variable: " + $ID.text.split("\\[")[0]);
+            System.err.println("Undefined variable: " + "\"" + $ID.text.split("\\[")[0] + "\"");
         }
         else {
-            System.err.println("undefined variable: " + $arrayElement.text.split("\\[")[0]);
+            System.err.println("Undefined variable: " + "\"" + $arrayElement.text.split("\\[")[0] + "\"");
         }
       }
       }
@@ -201,12 +201,30 @@ continueStatement:
       CONTINUE_SYM ID? SEMICOLON_SYM
     ;
 
-function:
-        (type (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)? | VOID_SYM) ID LEFT_PARENTHESE_SYM parameterList RIGHT_PARENTHESE_SYM block
+function
+        locals [
+        List<String> parameters = new ArrayList<String>(),
+        String functionName = new String();
+        ]
+        :
+        (type (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)? | VOID_SYM) ID
+        {$functionName = $ID.text;}
+        LEFT_PARENTHESE_SYM parameterList RIGHT_PARENTHESE_SYM block
         ;
 
 parameterList:
-        (type ID (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)? (COMMA_SYM type ID (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)?)*)?
+        (type ID
+        {
+        $function::parameters.add($ID.text);
+        }
+        (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)? (COMMA_SYM type ID
+        {
+        if($function::parameters.contains($ID.text))
+        { System.err.println("\"" + $ID.text + "\"" + " argument already declared in function " + "\""
+        +  $function::functionName + "\"" + "."); }
+        $function::parameters.add($ID.text);
+        }
+        (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)?)*)?
         ;
 
 bitOperator:
