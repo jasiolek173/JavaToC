@@ -33,7 +33,7 @@ statement:
         | assignment
         ;
 
-loopStatment:
+loopStatement:
                 statement
              |  breakStatement
              |  continueStatement
@@ -119,7 +119,7 @@ loopBlock
       List<String> symbols = new ArrayList<String>();
       ]
       :
-      LEFT_BRACE_SYM loopStatment* RIGHT_BRACE_SYM
+      LEFT_BRACE_SYM loopStatement* RIGHT_BRACE_SYM
       ;
 
 
@@ -130,11 +130,11 @@ ifStatement:
     ;
 
 doWhileStatement:
-    DO_SYM (loopBlock | loopStatment) WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM
+    DO_SYM (loopBlock | loopStatement) WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM
     ;
 
 whileDoStatement:
-    WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM (loopBlock | loopStatment)
+    WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM (loopBlock | loopStatement)
     ;
 
 assignmentOperator:
@@ -186,7 +186,7 @@ assignmentExpression:
 forStatement:
         enhancedForStatement
       | FOR_SYM LEFT_PARENTHESE_SYM forInit? SEMICOLON_SYM logicalExpression? SEMICOLON_SYM forUpdate? RIGHT_PARENTHESE_SYM
-        (loopBlock | loopStatment)
+        (loopBlock | loopStatement)
       ;
 
 forInit:
