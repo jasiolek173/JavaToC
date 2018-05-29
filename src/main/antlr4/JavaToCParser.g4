@@ -20,6 +20,17 @@ variableDeclaration:
                      SEMICOLON_SYM
                      ;
 
+variableDeclarationWithoutSemicolon:
+                     type ID
+                     {
+                        if($block::symbols.contains($ID.text)) {
+                            System.err.println("Variable " + "\"" + $ID.text + "\"" + " already declared in this scope.");
+                        } else {
+                            $block::symbols.add($ID.text);
+                        }
+                     }
+                     ;
+
 statement:
           variableDeclaration
         | arrayVariableDeclaration
@@ -190,9 +201,9 @@ forStatement:
       ;
 
 forInit:
-        variableDeclaration (ASSIGNMENT_SYM (ID | arrayElement))+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING))?
+        variableDeclarationWithoutSemicolon (ASSIGNMENT_SYM (ID | arrayElement))+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING))?
       | (ID | arrayElement) (ASSIGNMENT_SYM (ID | arrayElement))+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID | arrayElement))?
-      | variableDeclaration ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID | arrayElement)
+      | variableDeclarationWithoutSemicolon ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID | arrayElement)
       ;
 
 forUpdate:
