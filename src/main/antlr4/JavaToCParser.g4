@@ -11,7 +11,10 @@ compilationUnit:
 variableDeclaration:
                      type ID
                      {
-                        if($block::symbols.contains($ID.text)) {
+                        if($loopBlock::symbols != null && $loopBlock::symbols.contains($ID.text)) {
+                            System.err.println("Variable " + "\"" + $ID.text + "\"" + " already declared in this scope.");
+                        }
+                        else if($block::symbols.contains($ID.text)) {
                             System.err.println("Variable " + "\"" + $ID.text + "\"" + " already declared in this scope.");
                         } else {
                             $block::symbols.add($ID.text);
@@ -23,11 +26,7 @@ variableDeclaration:
 variableDeclarationWithoutSemicolon:
                      type ID
                      {
-                        if($block::symbols.contains($ID.text)) {
-                            System.err.println("Variable " + "\"" + $ID.text + "\"" + " already declared in this scope.");
-                        } else {
-                            $block::symbols.add($ID.text);
-                        }
+                        $forStatement::symbols.add($ID.text);
                      }
                      ;
 
@@ -130,6 +129,7 @@ loopBlock
       List<String> symbols = new ArrayList<String>();
       ]
       :
+      {$loopBlock::symbols.addAll($forStatement::symbols);}
       LEFT_BRACE_SYM loopStatement* RIGHT_BRACE_SYM
       ;
 
@@ -183,18 +183,22 @@ assignmentExpression:
         ((ID | arrayElement) assignmentOperator (ID | arrayElement | expression)
       | (ID | arrayElement) (ASSIGNMENT_SYM (ID | arrayElement))+ expression?)
       { if(!$block::symbols.contains($ID.text) &&
-      ($arrayElement.text == null || !$block::symbols.contains($arrayElement.text.split("\\[")[0]))) {
-        if($ID.text != null) {
-            System.err.println("Undefined variable: " + "\"" + $ID.text + "\"");
-        }
-        else {
-            System.err.println("Undefined variable: " + "\"" + $arrayElement.text.split("\\[")[0] + "\"");
-        }
-      }
-      }
+            ($arrayElement.text == null || !$block::symbols.contains($arrayElement.text.split("\\[")[0]))) {
+              if($ID.text != null) {
+                  System.err.println("Undefined variable: " + "\"" + $ID.text + "\"");
+              }
+              else {
+                  System.err.println("Undefined variable: " + "\"" + $arrayElement.text.split("\\[")[0] + "\"");
+              }
+            }
+            }
       ;
 
-forStatement:
+forStatement
+        locals [
+        List<String> symbols = new ArrayList<String>();
+        ]
+        :
         enhancedForStatement
       | FOR_SYM LEFT_PARENTHESE_SYM forInit? SEMICOLON_SYM logicalExpression? SEMICOLON_SYM forUpdate? RIGHT_PARENTHESE_SYM
         (loopBlock | loopStatement)
