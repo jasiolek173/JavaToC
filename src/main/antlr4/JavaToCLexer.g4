@@ -102,7 +102,7 @@ WHITE_SPACES:
             [ \t\r\n] -> skip ;
 
 NEW_LINE:
-        ('\r'? '\n' | '\r')+
+        ('\r'? '\n' | '\r')+ -> skip
         ;
 
 LINE_COMMENT:

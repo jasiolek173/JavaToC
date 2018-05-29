@@ -7,8 +7,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 public class Main {
     public static void main(String[] args) {
-        JavaToCLexer javaToCLexer = new JavaToCLexer(CharStreams.fromString("1"));
+        JavaToCLexer javaToCLexer = new JavaToCLexer(CharStreams.fromString("int main(){\n" +
+                "int a;"+
+                "}"));
         JavaToCParser javaToCParser = new JavaToCParser(new CommonTokenStream(javaToCLexer));
-        System.out.println(javaToCParser.compilationUnit().getText());
+        System.out.println(javaToCParser.function().getText());
     }
 }
