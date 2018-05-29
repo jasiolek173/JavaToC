@@ -280,7 +280,13 @@ arrayVariableDeclaration:
       | postIncrementationExpression
         )
         RIGHT_BRACKET_SYM
-        {$block::symbols.add($ID.text);}
+        {
+            if($block::symbols.contains($ID.text)) {
+                System.err.println("Variable " + "\"" + $ID.text + "\"" + " already declared in this scope.");
+            } else {
+                $block::symbols.add($ID.text);
+            }
+        }
         SEMICOLON_SYM
         ;
 
@@ -288,7 +294,13 @@ arrayVariableDeclarationWithInitialization:
         type ID LEFT_BRACKET_SYM RIGHT_BRACKET_SYM ASSIGNMENT_SYM LEFT_BRACE_SYM
         ((expression COMMA_SYM)*expression? | COMMA_SYM? | expression)
         RIGHT_BRACE_SYM
-        {$block::symbols.add($ID.text);}
+        {
+            if($block::symbols.contains($ID.text)) {
+                System.err.println("Variable " + "\"" + $ID.text + "\"" + " already declared in this scope.");
+            } else {
+                $block::symbols.add($ID.text);
+            }
+        }
         SEMICOLON_SYM
         ;
 
