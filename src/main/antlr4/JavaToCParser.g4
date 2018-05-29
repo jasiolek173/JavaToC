@@ -9,7 +9,15 @@ compilationUnit:
                 function*;
 
 variableDeclaration:
-                     type ID {$block::symbols.add($ID.text);} SEMICOLON_SYM
+                     type ID
+                     {
+                        if($block::symbols.contains($ID.text)) {
+                            System.err.println("Variable " + "\"" + $ID.text + "\"" + " already declared in this scope.");
+                        } else {
+                            $block::symbols.add($ID.text);
+                        }
+                     }
+                     SEMICOLON_SYM
                      ;
 
 statement:
