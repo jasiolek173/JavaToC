@@ -172,7 +172,7 @@ assignmentExpression:
         ((ID | arrayElement) assignmentOperator (ID | arrayElement | expression)
       | (ID | arrayElement) (ASSIGNMENT_SYM (ID | arrayElement))+ expression?)
       { if(!$block::symbols.contains($ID.text) &&
-      ($arrayElement.text == null || !$block::symbols.contains($arrayElement.text.split("\\[")[0]))) {
+      ($arrayElement.text != null && !$block::symbols.contains($arrayElement.text.split("\\[")[0]))) {
         if($ID.text != null) {
             System.err.println("Undefined variable: " + "\"" + $ID.text.split("\\[")[0] + "\"");
         }
