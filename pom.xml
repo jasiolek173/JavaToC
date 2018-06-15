@@ -31,6 +31,8 @@
                 <version>4.7.1</version>
                 <configuration>
                     <outputDirectory>src/main/java/com/compailer/javatoc/parser</outputDirectory>
+                    <listener>true</listener>
+                    <visitor>true</visitor>
                 </configuration>
                 <executions>
                     <execution>
@@ -39,6 +41,7 @@
                         </goals>
                     </execution>
                 </executions>
+
             </plugin>
         </plugins>
     </build>

@@ -6,28 +6,15 @@ package com.compailer.javatoc.parser;
 options { tokenVocab=JavaToCLexer; }
 
 compilationUnit:
-                function*;
+                function*
+                ;
 
 variableDeclaration:
-                     type ID
-                     {
-                        if($loopBlock::symbols != null && $loopBlock::symbols.contains($ID.text)) {
-                            System.err.println("Variable " + "\"" + $ID.text + "\"" + " already declared in this scope.");
-                        }
-                        else if($block::symbols.contains($ID.text)) {
-                            System.err.println("Variable " + "\"" + $ID.text + "\"" + " already declared in this scope.");
-                        } else {
-                            $block::symbols.add($ID.text);
-                        }
-                     }
-                     SEMICOLON_SYM
+                     type ID SEMICOLON_SYM
                      ;
 
 variableDeclarationWithoutSemicolon:
                      type ID
-                     {
-                        $forStatement::symbols.add($ID.text);
-                     }
                      ;
 
 statement:
@@ -116,20 +103,11 @@ type:
       | DOUBLE_SYM
       ;
 
-block
-      locals [
-      List<String> symbols = new ArrayList<String>();
-      ]
-      :
+block:
       LEFT_BRACE_SYM statement* RIGHT_BRACE_SYM
       ;
 
-loopBlock
-      locals [
-      List<String> symbols = new ArrayList<String>();
-      ]
-      :
-      {$loopBlock::symbols.addAll($forStatement::symbols);}
+loopBlock:
       LEFT_BRACE_SYM loopStatement* RIGHT_BRACE_SYM
       ;
 
@@ -182,23 +160,9 @@ assignment:
 assignmentExpression:
         ((ID | arrayElement) assignmentOperator (ID | arrayElement | expression)
       | (ID | arrayElement) (ASSIGNMENT_SYM (ID | arrayElement))+ expression?)
-      { if(!$block::symbols.contains($ID.text) &&
-            ($arrayElement.text == null || !$block::symbols.contains($arrayElement.text.split("\\[")[0]))) {
-              if($ID.text != null) {
-                  System.err.println("Undefined variable: " + "\"" + $ID.text + "\"");
-              }
-              else {
-                  System.err.println("Undefined variable: " + "\"" + $arrayElement.text.split("\\[")[0] + "\"");
-              }
-            }
-            }
-      ;
+       ;
 
-forStatement
-        locals [
-        List<String> symbols = new ArrayList<String>();
-        ]
-        :
+forStatement:
         enhancedForStatement
       | FOR_SYM LEFT_PARENTHESE_SYM forInit? SEMICOLON_SYM logicalExpression? SEMICOLON_SYM forUpdate? RIGHT_PARENTHESE_SYM
         (loopBlock | loopStatement)
@@ -230,29 +194,13 @@ continueStatement:
       CONTINUE_SYM ID? SEMICOLON_SYM
     ;
 
-function
-        locals [
-        List<String> parameters = new ArrayList<String>(),
-        String functionName = new String();
-        ]
-        :
-        (type (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)? | VOID_SYM) ID
-        {$functionName = $ID.text;}
-        LEFT_PARENTHESE_SYM parameterList RIGHT_PARENTHESE_SYM block
+function:
+        (type (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)? | VOID_SYM) ID LEFT_PARENTHESE_SYM parameterList RIGHT_PARENTHESE_SYM block
         ;
 
 parameterList:
         (type ID
-        {
-        $function::parameters.add($ID.text);
-        }
         (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)? (COMMA_SYM type ID
-        {
-        if($function::parameters.contains($ID.text))
-        { System.err.println("\"" + $ID.text + "\"" + " argument already declared in function " + "\""
-        +  $function::functionName + "\"" + "."); }
-        $function::parameters.add($ID.text);
-        }
         (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)?)*)?
         ;
 
@@ -301,13 +249,6 @@ arrayVariableDeclaration:
       | postIncrementationExpression
         )
         RIGHT_BRACKET_SYM
-        {
-            if($block::symbols.contains($ID.text)) {
-                System.err.println("Variable " + "\"" + $ID.text + "\"" + " already declared in this scope.");
-            } else {
-                $block::symbols.add($ID.text);
-            }
-        }
         SEMICOLON_SYM
         ;
 
@@ -315,13 +256,6 @@ arrayVariableDeclarationWithInitialization:
         type ID LEFT_BRACKET_SYM RIGHT_BRACKET_SYM ASSIGNMENT_SYM LEFT_BRACE_SYM
         ((expression COMMA_SYM)*expression? | COMMA_SYM? | expression)
         RIGHT_BRACE_SYM
-        {
-            if($block::symbols.contains($ID.text)) {
-                System.err.println("Variable " + "\"" + $ID.text + "\"" + " already declared in this scope.");
-            } else {
-                $block::symbols.add($ID.text);
-            }
-        }
         SEMICOLON_SYM
         ;
 
