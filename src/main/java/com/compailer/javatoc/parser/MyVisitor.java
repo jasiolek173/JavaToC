@@ -68,6 +68,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
 
     @Override
     public String visitFunction(JavaToCParser.FunctionContext ctx) {
+        String errors = "";
         Method method = new Method();
         Variable returnType = new Variable();
         returnType.setType(getReturnTypeName(ctx.getChild(0)));
@@ -78,7 +79,10 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
             method.setName(ctx.getChild(1).toString());
         method.setReturnType(returnType);
         methodList.add(method);
-        return visitChildren(ctx);
+        String result = visitChildren(ctx);
+        if (!isMethodUnique(method))
+            errors += "\nERROR there is function with same parameter type and same name: " + method.getName() + "\n";
+        return errors + result;
     }
 
     @Override
@@ -98,6 +102,10 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
                 return "0";
             case ";":
                 return ";\n";
+            case "}":
+                return "}\n";
+            case "{":
+                return "{\n";
         }
         return node.toString() + " ";
     }
@@ -128,6 +136,8 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     }
 
     private Variable getVariableWithNameFromMethod(Method method, String name) {
+        if (method != null)
+            return null;
         for (Variable v : method.getVariables())
             if (v.getName().equals(name))
                 return v;
@@ -185,5 +195,22 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
         char[] data = new char[length];
         Arrays.fill(data, c);
         return new String(data);
+    }
+
+    private boolean isMethodUnique(Method method) {
+        for (Method method1 : methodList) {
+            if (method1 == method || !method.getName().equals(method.getName()) || method.getVariables().size() != method1.getVariables().size())
+                continue;
+            if (method.getVariables().size() == 0)
+                return false;
+            for (int i = 0; i < method.getVariables().size(); i++) {
+                Variable a = method.getVariables().get(i);
+                Variable b = method1.getVariables().get(i);
+                if (!a.getType().equals(b.getType()) || !a.getTypeFactor().equals(b.getTypeFactor()))
+                    continue;
+                return false;
+            }
+        }
+        return true;
     }
 }
