@@ -87,8 +87,30 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
 
     @Override
     public String visitArrayVariableDeclaration(JavaToCParser.ArrayVariableDeclarationContext ctx) {
+        List<Variable> variables = getLocalVariableScope();
+        Variable variable = new Variable();
+        variable.setTypeFactor(Variable.Type.ARRAY);
+        variable.setType(getReturnTypeName(ctx.getChild(0)));
+        variable.setName(ctx.getChild(1).toString());
+        String error = "";
+        if (!checkIfVariableIsAvailableInLocalScope(variable.getName()))
+            error += "\nERROR- there is in local scope variable with same name : " + variable.getName() + "\n";
+        variables.add(variable);
+        return error + visitChildren(ctx);
+    }
 
-        return visitChildren(ctx);
+    @Override
+    public String visitArrayVariableDeclarationWithInitialization(JavaToCParser.ArrayVariableDeclarationWithInitializationContext ctx) {
+        List<Variable> variables = getLocalVariableScope();
+        Variable variable = new Variable();
+        variable.setTypeFactor(Variable.Type.ARRAY);
+        variable.setType(getReturnTypeName(ctx.getChild(0)));
+        variable.setName(ctx.getChild(1).toString());
+        String error = "";
+        if (!checkIfVariableIsAvailableInLocalScope(variable.getName()))
+            error += "\nERROR- there is in local scope variable with same name : " + variable.getName() + "\n";
+        variables.add(variable);
+        return error + visitChildren(ctx);
     }
 
     @Override
