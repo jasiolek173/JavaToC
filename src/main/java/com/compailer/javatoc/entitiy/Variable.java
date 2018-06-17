@@ -8,6 +8,7 @@ public class Variable {
     private String type;
     private String name;
     private String value;
+    private int size;
 
     public String getType() {
         return type;

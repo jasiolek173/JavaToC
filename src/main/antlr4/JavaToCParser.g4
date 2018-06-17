@@ -32,6 +32,7 @@ statement:
         | assignment
         | (expression SEMICOLON_SYM)
         | functionExecutionWithSemicolon
+        | variableDeclarationWithInitialization
         ;
 
 loopStatement:
@@ -168,9 +169,9 @@ assignment:
 
 
 assignmentExpression:
-        ((ID | functionExecution | arrayElement) assignmentOperator (ID | functionExecution | arrayElement | expression)
-      | (ID | functionExecution | arrayElement) (ASSIGNMENT_SYM (ID | functionExecution | arrayElement))+ expression?)
-       ;
+        ((ID | arrayElement) assignmentOperator (ID | functionExecution | arrayElement | expression)
+      | (ID | arrayElement) (ASSIGNMENT_SYM (ID | functionExecution | arrayElement))+ expression?)
+      ;
 
 forStatement:
         enhancedForStatement
@@ -286,3 +287,8 @@ arrayVariableDeclarationWithInitialization:
 arrayElement:
         ID LEFT_BRACKET_SYM expression RIGHT_BRACKET_SYM
         ;
+
+variableDeclarationWithInitialization:
+        (variableDeclarationWithoutSemicolon assignmentOperator (ID | functionExecution | arrayElement | expression) SEMICOLON_SYM)
+      | (variableDeclarationWithoutSemicolon (ASSIGNMENT_SYM (ID | functionExecution | arrayElement))+ expression? SEMICOLON_SYM)
+      ;

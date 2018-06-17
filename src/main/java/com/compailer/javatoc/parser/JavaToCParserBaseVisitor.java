@@ -321,4 +321,11 @@ public class JavaToCParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitArrayElement(JavaToCParser.ArrayElementContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitVariableDeclarationWithInitialization(JavaToCParser.VariableDeclarationWithInitializationContext ctx) { return visitChildren(ctx); }
 }

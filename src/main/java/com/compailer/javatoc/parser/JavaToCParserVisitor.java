@@ -276,4 +276,10 @@ public interface JavaToCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitArrayElement(JavaToCParser.ArrayElementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaToCParser#variableDeclarationWithInitialization}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariableDeclarationWithInitialization(JavaToCParser.VariableDeclarationWithInitializationContext ctx);
 }

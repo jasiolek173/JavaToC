@@ -541,6 +541,18 @@ public class JavaToCParserBaseListener implements JavaToCParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitArrayElement(JavaToCParser.ArrayElementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterVariableDeclarationWithInitialization(JavaToCParser.VariableDeclarationWithInitializationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVariableDeclarationWithInitialization(JavaToCParser.VariableDeclarationWithInitializationContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

@@ -476,6 +476,16 @@ public class MyListener extends BaseErrorListener implements JavaToCParserListen
     }
 
     @Override
+    public void enterVariableDeclarationWithInitialization(JavaToCParser.VariableDeclarationWithInitializationContext ctx) {
+        System.out.println("ENTER");
+    }
+
+    @Override
+    public void exitVariableDeclarationWithInitialization(JavaToCParser.VariableDeclarationWithInitializationContext ctx) {
+        System.out.println("ENTER");
+    }
+
+    @Override
     public void visitTerminal(TerminalNode terminalNode) {
         text+=terminalNode.getText();
     }
