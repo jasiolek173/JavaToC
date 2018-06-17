@@ -244,8 +244,10 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     @Override
     public String visitLogicalEquivalent(JavaToCParser.LogicalEquivalentContext ctx) {
         String error = "";
-        String child = ctx.getChild(0).toString();
-        if (!child.equals("true") && !child.equals("false") && checkIfVariableIsAvailableInLocalScope(child)) {
+        String child = ctx.getChild(0).getChild(0).toString();
+        if((ctx.getChild(0) instanceof JavaToCParser.LogicalConstContext))
+            return visitChildren(ctx);
+        if (checkIfVariableIsAvailableInLocalScope(child)) {
             error += "\nERROR- there is no defined variable with name " + child + "\n";
         }
         return error + visitChildren(ctx);
