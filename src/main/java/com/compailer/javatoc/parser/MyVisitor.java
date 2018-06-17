@@ -3,17 +3,16 @@ package com.compailer.javatoc.parser;
 import com.compailer.javatoc.entitiy.Method;
 import com.compailer.javatoc.entitiy.Variable;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class MyVisitor extends JavaToCParserBaseVisitor<String> {
 
     private List<Method> methodList = new ArrayList<>();
     private List<List<Variable>> blocksWithVariables = new ArrayList<>();
+    private Map<String, String> enhancedMapVariable = new HashMap<>();
 
     @Override
     public String visitBlock(JavaToCParser.BlockContext ctx) {
@@ -25,6 +24,22 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
 
     @Override
     public String visitVariableDeclaration(JavaToCParser.VariableDeclarationContext ctx) {
+        List<Variable> variablesLast = blocksWithVariables.get(blocksWithVariables.size() - 1);
+        if (variablesLast != null) {
+            String name = ctx.getChild(1).toString();
+            if (!checkIfVariableIsAvailableInLocalScope(name)) {
+                return "\nERROR- there is in local scope variable with same name : " + name + "\n" + visitChildren(ctx);
+            }
+            Variable variable = new Variable();
+            variable.setType(ctx.getChild(0).getChild(0).toString());
+            variable.setName(ctx.getChild(1).toString());
+            variablesLast.add(variable);
+        }
+        return visitChildren(ctx);
+    }
+
+    @Override
+    public String visitVariableDeclarationWithoutSemicolon(JavaToCParser.VariableDeclarationWithoutSemicolonContext ctx) {
         List<Variable> variablesLast = blocksWithVariables.get(blocksWithVariables.size() - 1);
         if (variablesLast != null) {
             String name = ctx.getChild(1).toString();
@@ -111,6 +126,65 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     }
 
     @Override
+    public String visitWhileDoStatement(JavaToCParser.WhileDoStatementContext ctx) {
+        blocksWithVariables.add(new ArrayList<>());
+        String result = visitChildren(ctx);
+        blocksWithVariables.remove(blocksWithVariables.size() - 1);
+        return result;
+    }
+
+    @Override
+    public String visitDoWhileStatement(JavaToCParser.DoWhileStatementContext ctx) {
+        blocksWithVariables.add(new ArrayList<>());
+        String result = visitChildren(ctx);
+        blocksWithVariables.remove(blocksWithVariables.size() - 1);
+        return result;
+    }
+
+    @Override
+    public String visitForStatement(JavaToCParser.ForStatementContext ctx) {
+        blocksWithVariables.add(new ArrayList<>());
+        String result = "";
+        if (ctx.getChild(0) instanceof JavaToCParser.EnhancedForStatementContext)
+            result = visitChildren(ctx);
+        else {
+            if (ctx.getChild(2) instanceof JavaToCParser.ForInitContext) {
+                result += visitChildren((RuleNode) ctx.getChild(2)) + ";\n";
+                result += "for(";
+                for (int i = 3; i < ctx.getChildCount(); i++)
+                    result += (ctx.getChild(i) instanceof TerminalNode) ? getReturnTypeName(ctx.getChild(i)) : visitChildren((RuleNode) ctx.getChild(i));
+            } else
+                result += visitChildren(ctx);
+        }
+        blocksWithVariables.remove(blocksWithVariables.size() - 1);
+        return result;
+    }
+
+    @Override
+    public String visitEnhancedForStatement(JavaToCParser.EnhancedForStatementContext ctx) {
+        String normalForString = "int ";
+        String newVariableString = getReturnTypeName(ctx.getChild(3));
+        normalForString += newVariableString + ";\n";
+        if (!checkIfVariableIsAvailableInLocalScope(newVariableString)) {
+            normalForString += "ERROR- there is in local scope variable with same name : " + newVariableString + "\n";
+        }
+        Variable tab = getVariableWithNameInAllBlockScope(ctx.getChild(5).toString());
+        if (tab == null) {
+            normalForString += "ERROR- there is not in local scope variable with name : " + ctx.getChild(5).toString() + "\n";
+        }
+        Variable variable = new Variable();
+        variable.setName(newVariableString);
+        variable.setType("int");
+        getLocalVariableScope().add(variable);
+        normalForString += "for ( " + newVariableString + " =  0; " + newVariableString + "< sizeof(" + ctx.getChild(5).toString() + ")/sizeof(" + ctx.getChild(5).toString() + "[0]);" +
+                newVariableString + "++)";
+        enhancedMapVariable.put(newVariableString, ctx.getChild(5).toString() + "[" + newVariableString + "]");
+        normalForString += visitChildren((RuleNode) ctx.getChild(7));
+        enhancedMapVariable.remove(newVariableString);
+        return normalForString;
+    }
+
+    @Override
     public String visitNumberEquivalent(JavaToCParser.NumberEquivalentContext ctx) {
         String error = "";
         if (Character.isLetter(ctx.getChild(0).toString().toCharArray()[0]) && checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
@@ -166,6 +240,9 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
 
     @Override
     public String visitTerminal(TerminalNode node) {
+        if (enhancedMapVariable.containsKey(node.toString())) {
+            return enhancedMapVariable.get(node.toString());
+        }
         switch (node.toString()) {
             case "boolean":
                 return "int";
