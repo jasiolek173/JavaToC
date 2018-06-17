@@ -390,6 +390,30 @@ public class JavaToCParserBaseListener implements JavaToCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterFunctionExecution(JavaToCParser.FunctionExecutionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFunctionExecution(JavaToCParser.FunctionExecutionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFunctionExecutionWithSemicolon(JavaToCParser.FunctionExecutionWithSemicolonContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFunctionExecutionWithSemicolon(JavaToCParser.FunctionExecutionWithSemicolonContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterParameterList(JavaToCParser.ParameterListContext ctx) { }
 	/**
 	 * {@inheritDoc}

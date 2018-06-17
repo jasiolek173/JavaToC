@@ -346,6 +346,26 @@ public class MyListener extends BaseErrorListener implements JavaToCParserListen
     }
 
     @Override
+    public void enterFunctionExecution(JavaToCParser.FunctionExecutionContext ctx) {
+        System.out.println("ENTER");
+    }
+
+    @Override
+    public void exitFunctionExecution(JavaToCParser.FunctionExecutionContext ctx) {
+        System.out.println("ENTER");
+    }
+
+    @Override
+    public void enterFunctionExecutionWithSemicolon(JavaToCParser.FunctionExecutionWithSemicolonContext ctx) {
+        System.out.println("ENTER");
+    }
+
+    @Override
+    public void exitFunctionExecutionWithSemicolon(JavaToCParser.FunctionExecutionWithSemicolonContext ctx) {
+        System.out.println("ENTER");
+    }
+
+    @Override
     public void enterParameterList(JavaToCParser.ParameterListContext ctx) {
         System.out.println("ENTER");
     }
