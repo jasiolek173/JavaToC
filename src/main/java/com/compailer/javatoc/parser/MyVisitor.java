@@ -43,7 +43,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
         List<Variable> variablesLast = blocksWithVariables.get(blocksWithVariables.size() - 1);
         if (variablesLast != null) {
             String name = ctx.getChild(1).toString();
-            if (!checkIfVariableIsAvailableInLocalScope(name)) {
+            if (!checkIfVariableIsAvailable(name)) {
                 return "\nERROR- there is in local scope variable with same name : " + name + "\n" + visitChildren(ctx);
             }
             Variable variable = new Variable();
@@ -66,7 +66,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
                 variable.setName(ctx.getChild(i + 1).toString());
                 if (getMethodWithName(variable.getName()) != null) {
                     errors += "\nERROR- there is function with same name : " + variable.getName() + "\n";
-                } else if (!checkIfVariableIsAvailableInLocalScope(variable.getName()))
+                } else if (!checkIfVariableIsAvailable(variable.getName()))
                     errors += "\nERROR- there is in local scope variable with same name : " + variable.getName() + "\n";
                 if (ctx.children.size() > i + 2 && ctx.children.get(i + 2).toString().equals("[")) {
                     variable.setTypeFactor(Variable.Type.ARRAY);
@@ -165,7 +165,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
         String normalForString = "int ";
         String newVariableString = getReturnTypeName(ctx.getChild(3));
         normalForString += newVariableString + ";\n";
-        if (!checkIfVariableIsAvailableInLocalScope(newVariableString)) {
+        if (!checkIfVariableIsAvailable(newVariableString)) {
             normalForString += "ERROR- there is in local scope variable with same name : " + newVariableString + "\n";
         }
         Variable tab = getVariableWithNameInAllBlockScope(ctx.getChild(5).toString());
@@ -190,7 +190,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
         if (!(ctx.getChild(0) instanceof JavaToCParser.FunctionExecutionContext) &&
                 !(ctx.getChild(0) instanceof JavaToCParser.ArrayElementContext) &&
                 Character.isLetter(ctx.getChild(0).toString().toCharArray()[0]) &&
-                checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
+                checkIfVariableIsAvailable(ctx.getChild(0).toString())) {
             error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
         }
         return error + visitChildren(ctx);
@@ -199,7 +199,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     @Override
     public String visitArrayElement(JavaToCParser.ArrayElementContext ctx) {
         String error = "";
-        if (checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
+        if (checkIfVariableIsAvailable(ctx.getChild(0).toString())) {
             error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
         }
         return error + visitChildren(ctx);
@@ -208,7 +208,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     @Override
     public String visitPreIncrementationExpression(JavaToCParser.PreIncrementationExpressionContext ctx) {
         String error = "";
-        if (checkIfVariableIsAvailableInLocalScope(ctx.getChild(1).toString())) {
+        if (checkIfVariableIsAvailable(ctx.getChild(1).toString())) {
             error += "\nERROR- there is no defined variable with name " + ctx.getChild(1).toString() + "\n";
         }
         return error + visitChildren(ctx);
@@ -217,7 +217,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     @Override
     public String visitPreDecrementationExpression(JavaToCParser.PreDecrementationExpressionContext ctx) {
         String error = "";
-        if (checkIfVariableIsAvailableInLocalScope(ctx.getChild(1).toString())) {
+        if (checkIfVariableIsAvailable(ctx.getChild(1).toString())) {
             error += "\nERROR- there is no defined variable with name " + ctx.getChild(1).toString() + "\n";
         }
         return error + visitChildren(ctx);
@@ -226,7 +226,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     @Override
     public String visitPostIncrementationExpression(JavaToCParser.PostIncrementationExpressionContext ctx) {
         String error = "";
-        if (checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
+        if (checkIfVariableIsAvailable(ctx.getChild(0).toString())) {
             error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
         }
         return error + visitChildren(ctx);
@@ -235,7 +235,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     @Override
     public String visitPostDecrementationExpression(JavaToCParser.PostDecrementationExpressionContext ctx) {
         String error = "";
-        if (checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
+        if (checkIfVariableIsAvailable(ctx.getChild(0).toString())) {
             error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
         }
         return error + visitChildren(ctx);
@@ -247,7 +247,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
         String child = ctx.getChild(0).getChild(0).toString();
         if((ctx.getChild(0) instanceof JavaToCParser.LogicalConstContext))
             return visitChildren(ctx);
-        if (checkIfVariableIsAvailableInLocalScope(child)) {
+        if (checkIfVariableIsAvailable(child)) {
             error += "\nERROR- there is no defined variable with name " + child + "\n";
         }
         return error + visitChildren(ctx);
@@ -264,7 +264,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
                     ctx.getChild(i).toString().equals("=")) {
                 continue;
             }
-            if(checkIfVariableIsAvailableInLocalScope(ctx.getChild(i).toString())) {
+            if(checkIfVariableIsAvailable(ctx.getChild(i).toString())) {
                 error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
             }
         }
@@ -281,7 +281,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
                 continue;
             }
             if(!Character.isDigit(ctx.getChild(i).toString().toCharArray()[0]) &&
-                    checkIfVariableIsAvailableInLocalScope(ctx.getChild(i).toString())) {
+                    checkIfVariableIsAvailable(ctx.getChild(i).toString())) {
                 error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
             }
         }
@@ -323,7 +323,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
                 continue;
             }
 
-            if(checkIfVariableIsAvailableInLocalScope(ctx.getChild(i).toString())) {
+            if(checkIfVariableIsAvailable(ctx.getChild(i).toString())) {
                 error += "\nERROR- there is no defined variable with name " + ctx.getChild(i).toString() + "\n";
             } else {
                 method.addParameter(getVariableWithNameInAllBlockScope(ctx.getChild(i).toString()));
@@ -395,7 +395,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     }
 
     private Variable getVariableWithNameFromMethod(Method method, String name) {
-        if (method != null)
+        if (method == null)
             return null;
         for (Variable v : method.getVariables())
             if (v.getName().equals(name))
@@ -437,6 +437,11 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
 
     private boolean checkIfVariableIsAvailableInLocalScope(String name) {
         return getVariableWithNameInScope(name, getLocalVariableScope()) == null && getMethodWithName(name) == null
+                && getVariableWithNameFromMethod(getLocalMethod(), name) == null;
+    }
+
+    private boolean checkIfVariableIsAvailable(String name) {
+        return getVariableWithNameInAllBlockScope(name) == null && getMethodWithName(name) == null
                 && getVariableWithNameFromMethod(getLocalMethod(), name) == null;
     }
 

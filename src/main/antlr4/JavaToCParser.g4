@@ -183,7 +183,7 @@ forInit:
       ;
 
 forUpdate:
-        assignmentExpression+ (COMMA_SYM assignmentExpression)*
+        (assignmentExpression| postDecrementationExpression|postIncrementationExpression|preDecrementationExpression|preIncrementationExpression)+ (COMMA_SYM (assignmentExpression|postDecrementationExpression|postIncrementationExpression|preDecrementationExpression|preIncrementationExpression))*
       ;
 
 enhancedForStatement:
