@@ -40,4 +40,31 @@ public class Variable {
     public void setTypeFactor(Type typeFactor) {
         this.typeFactor = typeFactor;
     }
+
+    public Variable() {}
+    public Variable(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Variable variable = (Variable) o;
+
+        if (typeFactor != variable.typeFactor) return false;
+        if (!type.equals(variable.type)) return false;
+        //if (!name.equals(variable.name)) return false;
+        return value != null ? value.equals(variable.value) : variable.value == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = typeFactor.hashCode();
+        result = 31 * result + type.hashCode();
+        //result = 31 * result + name.hashCode();
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        return result;
+    }
 }

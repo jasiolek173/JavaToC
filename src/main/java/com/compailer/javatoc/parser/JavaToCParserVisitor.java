@@ -199,6 +199,18 @@ public interface JavaToCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunction(JavaToCParser.FunctionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link JavaToCParser#functionExecution}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionExecution(JavaToCParser.FunctionExecutionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaToCParser#functionExecutionWithSemicolon}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionExecutionWithSemicolon(JavaToCParser.FunctionExecutionWithSemicolonContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link JavaToCParser#parameterList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

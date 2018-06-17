@@ -187,7 +187,10 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     @Override
     public String visitNumberEquivalent(JavaToCParser.NumberEquivalentContext ctx) {
         String error = "";
-        if (Character.isLetter(ctx.getChild(0).toString().toCharArray()[0]) && checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
+        if (!(ctx.getChild(0) instanceof JavaToCParser.FunctionExecutionContext) &&
+                !(ctx.getChild(0) instanceof JavaToCParser.ArrayElementContext) &&
+                Character.isLetter(ctx.getChild(0).toString().toCharArray()[0]) &&
+                checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
             error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
         }
         return error + visitChildren(ctx);
@@ -239,6 +242,98 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     }
 
     @Override
+    public String visitLogicalEquivalent(JavaToCParser.LogicalEquivalentContext ctx) {
+        String error = "";
+        String child = ctx.getChild(0).toString();
+        if (!child.equals("true") && !child.equals("false") && checkIfVariableIsAvailableInLocalScope(child)) {
+            error += "\nERROR- there is no defined variable with name " + child + "\n";
+        }
+        return error + visitChildren(ctx);
+    }
+
+    @Override
+    public String visitAssignmentExpression(JavaToCParser.AssignmentExpressionContext ctx) {
+        String error = "";
+        for(int i = 0; i < ctx.getChildCount(); ++i) {
+            if(ctx.getChild(i) instanceof JavaToCParser.ExpressionContext ||
+                    ctx.getChild(i) instanceof JavaToCParser.ArrayElementContext ||
+                    ctx.getChild(i) instanceof JavaToCParser.AssignmentOperatorContext ||
+                    ctx.getChild(i) instanceof  JavaToCParser.FunctionExecutionContext ||
+                    ctx.getChild(i).toString().equals("=")) {
+                continue;
+            }
+            if(checkIfVariableIsAvailableInLocalScope(ctx.getChild(i).toString())) {
+                error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
+            }
+        }
+        return error + visitChildren(ctx);
+    }
+
+    @Override
+    public String visitBitExpression(JavaToCParser.BitExpressionContext ctx) {
+        String error = "";
+        for(int i = 0; i < ctx.getChildCount(); ++i) {
+            if(ctx.getChild(i) instanceof JavaToCParser.ArrayElementContext ||
+                    ctx.getChild(i) instanceof JavaToCParser.BitOperatorContext ||
+                    ctx.getChild(i) instanceof JavaToCParser.FunctionExecutionContext) {
+                continue;
+            }
+            if(!Character.isDigit(ctx.getChild(i).toString().toCharArray()[0]) &&
+                    checkIfVariableIsAvailableInLocalScope(ctx.getChild(i).toString())) {
+                error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
+            }
+        }
+        return error + visitChildren(ctx);
+    }
+
+    @Override
+    public String visitFunctionExecution(JavaToCParser.FunctionExecutionContext ctx) {
+        String error = "";
+        Method method = new Method();
+        method.setName(ctx.getChild(0).toString());
+        for(int i = 1; i < ctx.getChildCount(); ++i) {
+            if(ctx.getChild(i) instanceof JavaToCParser.FunctionExecutionContext) {
+                Method method1 = getMethodWithName(ctx.getChild(i).getChild(0).toString());
+                if(method1 != null)
+                    method.addParameter(method1.getReturnType());
+                continue;
+            }
+
+            if(ctx.getChild(i) instanceof JavaToCParser.ArrayElementContext) {
+                Variable variable = getVariableWithNameInAllBlockScope(ctx.getChild(i).getChild(0).toString());
+                if(variable != null) {
+                    method.addParameter(variable);
+                }
+                continue;
+            }
+
+            if(ctx.getChild(i).toString().equals("(") ||
+                    ctx.getChild(i).toString().equals(")") ||
+                    ctx.getChild(i).toString().equals(",")) {
+                continue;
+            }
+
+            if(ctx.getChild(i) instanceof JavaToCParser.NumberContext) {
+                if(getMethodWithName(method.getName()).getVariables().size() > method.getVariables().size())
+                    method.addParameter(getMethodWithName(method.getName()).getVariables().get(method.getVariables().size()));
+                else
+                    error += "ERROR- too many parameters in function: " + method.getName() + "\n";
+                continue;
+            }
+
+            if(checkIfVariableIsAvailableInLocalScope(ctx.getChild(i).toString())) {
+                error += "\nERROR- there is no defined variable with name " + ctx.getChild(i).toString() + "\n";
+            } else {
+                method.addParameter(getVariableWithNameInAllBlockScope(ctx.getChild(i).toString()));
+            }
+        }
+        if(getMethodWithNameAndParameters(method.getName(), method.getVariables()) == null) {
+            error += "\nERROR- there is no defined function with name " + method.getName() + " or you type wrong parameters.\n";
+        }
+        return error + visitChildren(ctx);
+    }
+
+    @Override
     public String visitTerminal(TerminalNode node) {
         if (enhancedMapVariable.containsKey(node.toString())) {
             return enhancedMapVariable.get(node.toString());
@@ -283,6 +378,17 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
         for (Method method : methodList)
             if (method.getName().equals(name))
                 return method;
+        return null;
+    }
+
+    private Method getMethodWithNameAndParameters(String name, List<Variable> parameters) {
+        for (Method method : methodList) {
+            if(method.getName().equals(name)) {
+                if(method.getVariables().equals(parameters)) {
+                    return method;
+                }
+            }
+        }
         return null;
     }
 

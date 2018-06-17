@@ -31,6 +31,7 @@ statement:
         | returnStatement
         | assignment
         | (expression SEMICOLON_SYM)
+        | functionExecutionWithSemicolon
         ;
 
 loopStatement:
@@ -55,6 +56,7 @@ number:
 numberEquivalent:
       number
     | ID
+    | functionExecution
     | arrayElement
     ;
 
@@ -66,6 +68,7 @@ logicalConst:
 logicalEquivalent:
       logicalConst
     | ID
+    | functionExecution
     | arrayElement
     ;
 
@@ -163,8 +166,8 @@ assignment:
 
 
 assignmentExpression:
-        ((ID | arrayElement) assignmentOperator (ID | arrayElement | expression)
-      | (ID | arrayElement) (ASSIGNMENT_SYM (ID | arrayElement))+ expression?)
+        ((ID | functionExecution | arrayElement) assignmentOperator (ID | functionExecution | arrayElement | expression)
+      | (ID | functionExecution | arrayElement) (ASSIGNMENT_SYM (ID | functionExecution | arrayElement))+ expression?)
        ;
 
 forStatement:
@@ -174,9 +177,9 @@ forStatement:
       ;
 
 forInit:
-        variableDeclarationWithoutSemicolon (ASSIGNMENT_SYM (ID | arrayElement))+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING))?
-      | (ID | arrayElement) (ASSIGNMENT_SYM (ID | arrayElement))+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID | arrayElement))?
-      | variableDeclarationWithoutSemicolon ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID | arrayElement)
+        variableDeclarationWithoutSemicolon (ASSIGNMENT_SYM (ID | functionExecution | arrayElement))+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING))?
+      | (ID | functionExecution | arrayElement) (ASSIGNMENT_SYM (ID | functionExecution | arrayElement))+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID | functionExecution | arrayElement))?
+      | variableDeclarationWithoutSemicolon ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID | functionExecution | arrayElement)
       ;
 
 forUpdate:
@@ -203,6 +206,17 @@ function:
         (type (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)? | VOID_SYM) ID LEFT_PARENTHESE_SYM parameterList RIGHT_PARENTHESE_SYM block
         ;
 
+functionExecution:
+        ID LEFT_PARENTHESE_SYM
+        ((ID | functionExecution | arrayElement | number | )
+        (COMMA_SYM (ID | functionExecution | arrayElement | number))*)?
+        RIGHT_PARENTHESE_SYM
+        ;
+
+functionExecutionWithSemicolon:
+        functionExecution SEMICOLON_SYM
+        ;
+
 parameterList:
         (type ID
         (LEFT_BRACKET_SYM RIGHT_BRACKET_SYM)? (COMMA_SYM type ID
@@ -219,7 +233,7 @@ bitOperator:
       ;
 
 bitExpression:
-        (ID | arrayElement | INTEGER_NUMBER) (bitOperator (ID | arrayElement | INTEGER_NUMBER))+
+        (ID | functionExecution | arrayElement | INTEGER_NUMBER) (bitOperator (ID | functionExecution | arrayElement | INTEGER_NUMBER))+
       ;
 
 stringNullAssignment:
@@ -246,6 +260,8 @@ arrayVariableDeclaration:
         (
         INTEGER_NUMBER
       | ID
+      | functionExecution
+      | arrayElement
       | arithmeticExpression
       | assignmentExpression
       | preDecrementationExpression

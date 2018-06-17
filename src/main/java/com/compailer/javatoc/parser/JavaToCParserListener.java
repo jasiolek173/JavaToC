@@ -320,6 +320,26 @@ public interface JavaToCParserListener extends ParseTreeListener {
 	 */
 	void exitFunction(JavaToCParser.FunctionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link JavaToCParser#functionExecution}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionExecution(JavaToCParser.FunctionExecutionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaToCParser#functionExecution}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionExecution(JavaToCParser.FunctionExecutionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaToCParser#functionExecutionWithSemicolon}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionExecutionWithSemicolon(JavaToCParser.FunctionExecutionWithSemicolonContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaToCParser#functionExecutionWithSemicolon}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionExecutionWithSemicolon(JavaToCParser.FunctionExecutionWithSemicolonContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link JavaToCParser#parameterList}.
 	 * @param ctx the parse tree
 	 */
