@@ -113,8 +113,8 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     @Override
     public String visitNumberEquivalent(JavaToCParser.NumberEquivalentContext ctx) {
         String error = "";
-        if(Character.isLetter(ctx.getChild(0).toString().toCharArray()[0]) && checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
-            error +=  "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
+        if (Character.isLetter(ctx.getChild(0).toString().toCharArray()[0]) && checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
+            error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
         }
         return error + visitChildren(ctx);
     }
@@ -122,7 +122,7 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     @Override
     public String visitArrayElement(JavaToCParser.ArrayElementContext ctx) {
         String error = "";
-        if(checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
+        if (checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
             error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
         }
         return error + visitChildren(ctx);
@@ -185,12 +185,13 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
 
     @Override
     protected String aggregateResult(String aggregate, String nextResult) {
-        if (nextResult != null && aggregate != null)
+        if (nextResult != null && aggregate != null && !nextResult.equals("null") && !aggregate.equals("null"))
             return aggregate + nextResult;
-        if (nextResult != null)
+        if (nextResult != null && !nextResult.equals("null"))
             return nextResult;
-
-        return aggregate;
+        if (aggregate != null && !aggregate.equals("null"))
+            return aggregate;
+        return "";
     }
 
 
