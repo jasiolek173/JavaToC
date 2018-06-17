@@ -106,10 +106,10 @@ NEW_LINE:
         ;
 
 LINE_COMMENT:
-            '//' ~[NEW_LINE]*
+            '//' ~('\r' | '\n')*
             ;
 COMMENT:
-        '/*' .*? '*/'
+        '/*' .* '*/'
         ;
 
 fragment DIGIT:

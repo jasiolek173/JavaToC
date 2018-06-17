@@ -15,12 +15,9 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     private List<Method> methodList = new ArrayList<>();
     private List<List<Variable>> blocksWithVariables = new ArrayList<>();
 
-    private int tabs = 0;
-
     @Override
     public String visitBlock(JavaToCParser.BlockContext ctx) {
         blocksWithVariables.add(new ArrayList<>());
-        tabs++;
         String result = visitChildren(ctx);
         blocksWithVariables.remove(blocksWithVariables.size() - 1);
         return result;
@@ -110,6 +107,60 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
         if (!checkIfVariableIsAvailableInLocalScope(variable.getName()))
             error += "\nERROR- there is in local scope variable with same name : " + variable.getName() + "\n";
         variables.add(variable);
+        return error + visitChildren(ctx);
+    }
+
+    @Override
+    public String visitNumberEquivalent(JavaToCParser.NumberEquivalentContext ctx) {
+        String error = "";
+        if(Character.isLetter(ctx.getChild(0).toString().toCharArray()[0]) && checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
+            error +=  "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
+        }
+        return error + visitChildren(ctx);
+    }
+
+    @Override
+    public String visitArrayElement(JavaToCParser.ArrayElementContext ctx) {
+        String error = "";
+        if(checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
+            error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
+        }
+        return error + visitChildren(ctx);
+    }
+
+    @Override
+    public String visitPreIncrementationExpression(JavaToCParser.PreIncrementationExpressionContext ctx) {
+        String error = "";
+        if (checkIfVariableIsAvailableInLocalScope(ctx.getChild(1).toString())) {
+            error += "\nERROR- there is no defined variable with name " + ctx.getChild(1).toString() + "\n";
+        }
+        return error + visitChildren(ctx);
+    }
+
+    @Override
+    public String visitPreDecrementationExpression(JavaToCParser.PreDecrementationExpressionContext ctx) {
+        String error = "";
+        if (checkIfVariableIsAvailableInLocalScope(ctx.getChild(1).toString())) {
+            error += "\nERROR- there is no defined variable with name " + ctx.getChild(1).toString() + "\n";
+        }
+        return error + visitChildren(ctx);
+    }
+
+    @Override
+    public String visitPostIncrementationExpression(JavaToCParser.PostIncrementationExpressionContext ctx) {
+        String error = "";
+        if (checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
+            error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
+        }
+        return error + visitChildren(ctx);
+    }
+
+    @Override
+    public String visitPostDecrementationExpression(JavaToCParser.PostDecrementationExpressionContext ctx) {
+        String error = "";
+        if (checkIfVariableIsAvailableInLocalScope(ctx.getChild(0).toString())) {
+            error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
+        }
         return error + visitChildren(ctx);
     }
 

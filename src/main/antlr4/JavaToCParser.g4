@@ -18,7 +18,9 @@ variableDeclarationWithoutSemicolon:
                      ;
 
 statement:
-          variableDeclaration
+          LINE_COMMENT
+        | COMMENT
+        | variableDeclaration
         | arrayVariableDeclaration
         | arrayVariableDeclarationWithInitialization
         | ifStatement
@@ -28,6 +30,7 @@ statement:
         | enhancedForStatement
         | returnStatement
         | assignment
+        | (expression SEMICOLON_SYM)
         ;
 
 loopStatement:
@@ -101,6 +104,7 @@ type:
       | LONG_SYM
       | FLOAT_SYM
       | DOUBLE_SYM
+      | STRING_SYM
       ;
 
 block:
@@ -144,6 +148,7 @@ assignmentOperator:
 expression:
         arithmeticExpression
       | logicalExpression
+      | bitExpression
       | assignmentExpression
       | preIncrementationExpression
       | postIncrementationExpression
