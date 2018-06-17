@@ -165,6 +165,49 @@ public class MyVisitor extends JavaToCParserBaseVisitor<String> {
     }
 
     @Override
+    public String visitLogicalEquivalent(JavaToCParser.LogicalEquivalentContext ctx) {
+        String error = "";
+        String child = ctx.getChild(0).toString();
+        if (!child.equals("true") && !child.equals("false") && checkIfVariableIsAvailableInLocalScope(child)) {
+            error += "\nERROR- there is no defined variable with name " + child + "\n";
+        }
+        return error + visitChildren(ctx);
+    }
+
+    @Override
+    public String visitAssignmentExpression(JavaToCParser.AssignmentExpressionContext ctx) {
+        String error = "";
+        for(int i = 0; i < ctx.getChildCount(); ++i) {
+            if(ctx.getChild(i) instanceof JavaToCParser.ExpressionContext ||
+                    ctx.getChild(i) instanceof JavaToCParser.ArrayElementContext ||
+                    ctx.getChild(i) instanceof JavaToCParser.AssignmentOperatorContext ||
+                    ctx.getChild(i).toString().equals("=")) {
+                continue;
+            }
+            if(checkIfVariableIsAvailableInLocalScope(ctx.getChild(i).toString())) {
+                error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
+            }
+        }
+        return error + visitChildren(ctx);
+    }
+
+    @Override
+    public String visitBitExpression(JavaToCParser.BitExpressionContext ctx) {
+        String error = "";
+        for(int i = 0; i < ctx.getChildCount(); ++i) {
+            if(ctx.getChild(i) instanceof JavaToCParser.ArrayElementContext ||
+                    ctx.getChild(i) instanceof JavaToCParser.BitOperatorContext) {
+                continue;
+            }
+            if(!Character.isDigit(ctx.getChild(i).toString().toCharArray()[0]) &&
+                    checkIfVariableIsAvailableInLocalScope(ctx.getChild(i).toString())) {
+                error += "\nERROR- there is no defined variable with name " + ctx.getChild(0).toString() + "\n";
+            }
+        }
+        return error + visitChildren(ctx);
+    }
+
+    @Override
     public String visitTerminal(TerminalNode node) {
         switch (node.toString()) {
             case "boolean":
