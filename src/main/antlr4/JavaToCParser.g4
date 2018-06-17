@@ -180,6 +180,7 @@ forInit:
         variableDeclarationWithoutSemicolon (ASSIGNMENT_SYM (ID | functionExecution | arrayElement))+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING))?
       | (ID | functionExecution | arrayElement) (ASSIGNMENT_SYM (ID | functionExecution | arrayElement))+ (ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID | functionExecution | arrayElement))?
       | variableDeclarationWithoutSemicolon ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID | functionExecution | arrayElement)
+      |(ID | functionExecution | arrayElement) ASSIGNMENT_SYM (numberEquivalent | CHAR | STRING | ID | functionExecution | arrayElement)
       ;
 
 forUpdate:
