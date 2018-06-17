@@ -67,7 +67,7 @@ BITWISE_AND_SYM:					'&';
 BITWISE_IN_OR_SYM:					'|';
 MODULO_SYM:							'%';
 NEGATIVE_SYM:						'!';
-TWO_BACKSLASHES_SYM:				'\\';
+BACKSLASH_SYM:				        '\\';
 ASSIGNMENT_SYM:						'=';
 GREATER_SYM:						'>';
 GREATER_OR_EQUAL_SYM:               '>=';
@@ -95,7 +95,7 @@ STRING:
             '"' .*? '"'
             ;
 CHAR:
-            '\'' . '\''
+            '\'' BACKSLASH_SYM?. '\''
             ;
 
 WHITE_SPACES:
