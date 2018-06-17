@@ -46,6 +46,7 @@ comparisonOperator:
     | GREATER_OR_EQUAL_SYM
     | LESS_OR_EQUAL_SYM
     | EQUALS_SYM
+    | NOT_EQUALS_SYM
     ;
 
 number:
@@ -81,6 +82,7 @@ arithmeticExpression:
      | arithmeticExpression MODULO_SYM arithmeticExpression
      | LEFT_PARENTHESE_SYM arithmeticExpression RIGHT_PARENTHESE_SYM
      | numberEquivalent
+     | CHAR
      ;
 
 comparisonExpression:
@@ -126,7 +128,7 @@ ifStatement:
     ;
 
 doWhileStatement:
-    DO_SYM (loopBlock | loopStatement) WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM
+    DO_SYM (loopBlock | loopStatement) WHILE_SYM LEFT_PARENTHESE_SYM logicalExpression RIGHT_PARENTHESE_SYM SEMICOLON_SYM
     ;
 
 whileDoStatement:
