@@ -13,7 +13,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource(TRANSLATOR_PANE));
-        primaryStage.setTitle("JavaToC");
+        primaryStage.setTitle("ProceduralMyJavaToC");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
